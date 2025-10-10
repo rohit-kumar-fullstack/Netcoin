@@ -330,7 +330,7 @@ export default function LoginMainPage() {
                                         <path d="m9 9 6 6"></path>
                                     </svg>
                                     <div className="ms-4">
-                                        <Typography component={"p"} id="hs-with-list-label" className="text-sm font-semibold" style={{ color: "#ff6467", fontWeight: "600" }}>
+                                        <Typography component={"p"} id="hs-with-list-label" className="text-sm font-semibold" style={{ color: "#ff6467", fontWeight: "600", textAlign: "start" }}>
                                             {alert?.message}
                                         </Typography>
                                     </div>
