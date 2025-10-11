@@ -39,7 +39,7 @@ export default function LoginMainPage() {
     const [showPassword, setShowPassword] = useState(false);
     const handleCloseHelp = () => setOpenHelpModal(false);
     const [loading, setLoading] = useState(false)
-    const [step, setStep] = useState(1)
+    const [step, setStep] = useState(0)
     const [phone, setPhone] = useState("")
     const {
         code,
