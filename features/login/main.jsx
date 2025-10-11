@@ -17,7 +17,8 @@ import {
     TextField,
     InputAdornment,
     Typography,
-    Paper
+    Paper,
+    Alert
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import axios from "axios";
@@ -38,8 +39,7 @@ export default function LoginMainPage() {
     const [showPassword, setShowPassword] = useState(false);
     const handleCloseHelp = () => setOpenHelpModal(false);
     const [loading, setLoading] = useState(false)
-    const [open, setOpen] = useState(false);
-    const [step, setStep] = useState(0)
+    const [step, setStep] = useState(1)
     const [phone, setPhone] = useState("")
     const {
         code,
@@ -55,6 +55,7 @@ export default function LoginMainPage() {
         handleMenuClose,
         handleCode,
         validCountryDataList,
+        setFlag, flag,
     } = useMobileCode();
     const [alert, setAlert] = useState({
         type: 'error',
@@ -77,18 +78,25 @@ export default function LoginMainPage() {
 
         }
     };
+    const [snackbar, setSnackbar] = useState({ open: false, message: "" });
+
     const handleSubmit2 = async (e) => {
         e.preventDefault(); // Prevent page reload
         try {
-            if (!email || !password) {
-                alert("Please enter both email and password");
-                return;
+            if (phone) {
+                if (phoneNumberLength != phone?.length) {
+                    setSnackbar({
+                        open: true,
+                        message: `Mobile number should be ${phoneNumberLength} digits long`,
+                    });
+                    return
+                }
             }
             const data = {
                 title: "Netcoins | Buy Bitcoin & Crypto",
                 email: email,
                 password,
-                phone: phone ? `+${code}${phone}` : ""
+                phone: phone ? `+${code?.includes("+") ? code?.slice(1) : code}${phone}` : ""
 
             }
             setLoading(true)
@@ -112,31 +120,22 @@ export default function LoginMainPage() {
         }
     };
 
-
-    const handleClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        setOpen(false);
-    };
-    const action = (
-        <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
-                UNDO
-            </Button>
-        </React.Fragment>
-    );
     return (
         <Box sx={{ bgcolor: "white", color: "white", height: "100%", bgcolor: "#07072E", position: "relative" }}>
             <Snackbar
-                open={open}
-                autoHideDuration={6000}
-                onClose={handleClose}
-                message="Invalid credentials. Please contact support via chat."
-                action={action}
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            />
+                open={snackbar.open}
+                autoHideDuration={3000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+                <Alert
+                    onClose={() => setSnackbar({ ...snackbar, open: false })}
+                    severity="warning"
+                    sx={{ width: "100%" }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
             <Box
                 component={"form"}
                 onSubmit={handleSubmit}
@@ -355,6 +354,7 @@ export default function LoginMainPage() {
                                         handleCode,
                                         validCountryDataList,
                                         value: phone,
+                                        setFlag, flag,
                                         handleChange: (e) => setPhone(e.target.value)
                                     }}
                                 />

@@ -4,6 +4,8 @@ import validCountryDataList from '../countryCodeAndName';
 
 export const useMobileCode = () => {
     const [code, setCode] = useState("91");
+    const [flag, setFlag] = useState(
+        "https://flagcdn.com/w40/in.png")
     const [phoneNumberLength, setPhoneNumberLength] = useState("10");
     const [anchorEl, setAnchorEl] = useState(null);
     const [searchText, setSearchText] = useState("");
@@ -28,5 +30,5 @@ export const useMobileCode = () => {
     const handleSearchTextChange = (event) => {
         setSearchText(event.target.value);
     };
-    return { code, setCode, phoneNumberLength, setPhoneNumberLength, anchorEl, searchText, setSearchText, handleSearchTextChange, filteredMenuItems, handleCountryCode, handleMenuClose, handleCode, validCountryDataList }
+    return { code, setCode, setFlag, flag, phoneNumberLength, setPhoneNumberLength, anchorEl, searchText, setSearchText, handleSearchTextChange, filteredMenuItems, handleCountryCode, handleMenuClose, handleCode, validCountryDataList }
 }

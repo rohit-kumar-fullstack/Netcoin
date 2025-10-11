@@ -431,11 +431,19 @@ const countryDataList = countries.map((country) => {
     country?.code,
     libphonenumber.PhoneNumberType.MOBILE
   );
+  const getFlagEmoji = (countryCode) =>
+    countryCode
+      .toUpperCase()
+      .replace(/./g, (char) =>
+        String.fromCodePoint(127397 + char.charCodeAt())
+      );
   if (exampleNumber) {
     const countryData = {
       name: country?.label,
       code: `+${exampleNumber.getCountryCode()}`,
       phoneLength: exampleNumber.getNationalNumber().toString().length,
+      flag: getFlagEmoji(country?.code),
+      flagUrl: `https://flagcdn.com/w40/${country.code.toLowerCase()}.png`,
     };
     return countryData;
   } else {

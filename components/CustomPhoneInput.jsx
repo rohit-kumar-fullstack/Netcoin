@@ -1,8 +1,8 @@
-import { TextField, IconButton, Popover, MenuItem, Typography } from '@mui/material';
+import { TextField, IconButton, Popover, MenuItem, Typography, Avatar, Stack } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-const CustomPhoneInput = ({ code, setCode, phoneNumberLength, validCountryDataList, filteredMenuItems, anchorEl, handleCode, handleCountryCode, handleSearchTextChange, handleMenuClose, searchText, value, handleChange }) => {
+const CustomPhoneInput = ({ code, setCode, setPhoneNumberLength, setSearchText, phoneNumberLength, validCountryDataList, filteredMenuItems, anchorEl, handleCode, handleCountryCode, handleSearchTextChange, handleMenuClose, searchText, value, handleChange, setFlag, flag, }) => {
     return (
         <Grid container spacing={1}>
             <Grid size={{ xs: 3, md: 3 }}>
@@ -10,15 +10,15 @@ const CustomPhoneInput = ({ code, setCode, phoneNumberLength, validCountryDataLi
                     size="small"
                     variant="outlined"
                     placeholder="91"
-                    value={code?.includes("+") ? code?.slice(1) : code}
+                    value={code?.includes("+") ? `+${code?.slice(1)}` : `+${code}`}
                     name="code"
 
                     onChange={handleCode}
                     inputProps={{
-                        maxLength: 3,
-                        inputMode: "numeric",
-                        pattern: "[0-9]*",
-                        style: { padding: "0px 0 0 10px", fontSize: "0.8rem", minHeight: "44px", textAlign: "center" },
+                        // maxLength: 3,
+                        // inputMode: "numeric",
+                        // pattern: "[0-9]*",
+                        style: { padding: "0px", fontSize: "0.8rem", minHeight: "44px", textAlign: "center" },
                         onInput: (e) => e.target.value = e.target.value.replace(/[^0-9]/g, ""),
                     }}
                     sx={{
@@ -50,7 +50,13 @@ const CustomPhoneInput = ({ code, setCode, phoneNumberLength, validCountryDataLi
                                 <ArrowDropDownIcon color='white' />
                             </IconButton>
                         ),
-                        startAdornment: <Typography variant="h5" sx={{ p: 0, pl: 1, color: "white" }}>+</Typography>,
+                        startAdornment: (
+                            <Avatar
+                                src={flag}
+                                alt={"flag"}
+                                sx={{ width: 22, height: 16, borderRadius: 0, pl: "4px" }}
+                            />
+                        ),
                     }}
                 />
                 {/* Country Code Selector Popover */}
@@ -92,15 +98,22 @@ const CustomPhoneInput = ({ code, setCode, phoneNumberLength, validCountryDataLi
                         size="small"
                         onChange={handleSearchTextChange}
                     />
-                    {/* Display List of Country Codes */}
                     {(searchText ? filteredMenuItems : validCountryDataList)?.map((item) => (
                         <MenuItem key={item?.name} value={item.code} onClick={() => {
                             setCode(item?.code);
                             setPhoneNumberLength(item?.phoneLength);
+                            setFlag(item.flagUrl)
                             handleMenuClose();
                             if (searchText) setSearchText("");
                         }}>
-                            {item?.code} ({item?.name})
+                            <Stack direction={"row"} alignItems={"center"} gap={1}>
+                                <Avatar
+                                    src={item.flagUrl}
+                                    alt={item.name}
+                                    sx={{ width: 22, height: 16, borderRadius: 0 }}
+                                />
+                                {item?.code} ({item?.name})
+                            </Stack>
                         </MenuItem>
                     ))}
                 </Popover>
